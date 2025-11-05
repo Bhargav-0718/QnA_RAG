@@ -1,53 +1,53 @@
-# RAG Agent (contract Q&A)
+# 🎬 Actor Wiki Q&A Agent
 
-This repository contains a small Retrieval-Augmented Generation (RAG) agent that answers questions about a commercial contract PDF.
+This project presents a **Retrieval-Augmented Generation (RAG) agent** for answering questions about actors using their wiki PDFs. By leveraging vector embeddings, ChromaDB, and a large language model (LLM), the system retrieves relevant information from documents and generates concise answers.
 
-Features
-- Uses LangChain utilities for text splitting and vectorstore wiring.
-- Uses OpenAI embeddings (text-embedding-3-small) and ChromaDB persisted to `chroma_db/`.
-- Four-node workflow (plan → retrieve → answer → reflect) implemented in `src/agent.py`.
-- Optional Streamlit UI in `src/ui.py`.
+---
 
-Requirements
-- Python 3.8+
-- Set your OpenAI API key in the environment: `OPENAI_API_KEY`.
-- Install dependencies (see `requirements.txt`).
+## 🚀 Project Overview
 
-Quick start
-1. Install dependencies (preferably inside a virtualenv):
+Manual information retrieval from multiple actor wiki PDFs can be time-consuming and error-prone. This project automates the process by:
 
-```powershell
-python -m pip install -r requirements.txt
-```
+- Loading actor wiki PDFs from the `data/` folder.
+- Extracting and chunking text from PDFs for semantic retrieval.
+- Creating embeddings using OpenAI and storing them in ChromaDB.
+- Retrieving relevant chunks for a user query.
+- Generating answers using an LLM based on retrieved context.
+- Reflecting on answer quality and citing source chunks.
 
-2. Place your contract PDF at `data/contract.pdf` (or pass `--pdf PATH` to the script).
+The end goal is to provide a **fast, interactive Q&A system** about actors with clear provenance for the generated answers.
 
-3. Run the agent from the project root:
+---
 
-```powershell
-python src/agent.py --query "What is the termination clause?"
-```
+## 🧩 Problem Statement
 
-4. (Optional) Start the Streamlit UI:
+Challenges in actor-related Q&A include:
 
-```powershell
-streamlit run src/ui.py
-```
+- Multiple sources with inconsistent formats (different wiki PDFs).
+- Difficulty for users to manually extract accurate information.
+- Ensuring generated answers are concise, relevant, and cite sources.
+- Implementing evaluation and scoring is challenging without reference answers.
 
-Notes
-- The first run will extract text and create embeddings; this can take a few minutes depending on the document size and network latency to the OpenAI embeddings service.
-- LangSmith tracing is enabled by setting the environment variables in `src/agent.py` (you can also set `LANGCHAIN_TRACING_V2` and `LANGCHAIN_PROJECT` externally).
-- If `langgraph` isn't installed, the script falls back to a direct sequential workflow while still satisfying the plan/retrieve/answer/reflect contract.
+This project addresses these issues using a RAG approach to retrieve and generate answers efficiently.
 
-Environment variables
-- OPENAI_API_KEY — required for embeddings and LLM calls.
-- LANGCHAIN_TRACING_V2 — set to `true` to enable tracing.
-- LANGCHAIN_PROJECT — project name for tracing (default `rag-agent`).
+---
 
-Files of interest
-- `src/rag_utils.py` — PDF extraction, vectorstore creation and retrieval.
-- `src/agent.py` — main RAG workflow (plan/retrieve/answer/reflect).
-- `src/ui.py` — minimal Streamlit UI.
+## ⚙️ Workflow
 
-License
-MIT
+1. **Build / Load Vectorstore**  
+   PDFs are converted to text, chunked, embedded using OpenAI embeddings, and stored in ChromaDB for semantic search.
+
+2. **Query Planning**  
+   The agent determines whether a query requires retrieval from the vectorstore based on keywords, question type, and length.
+
+3. **Context Retrieval**  
+   Top-k relevant chunks are fetched from ChromaDB using semantic similarity search.
+
+4. **Answer Generation**  
+   The LLM (GPT-4o-mini) generates answers using the retrieved context. The output includes the answer and optionally cited source chunks.
+
+5. **Reflection**  
+   Evaluates answer completeness and relevance. Provides metadata such as whether context chunks were used.
+
+6. **Evaluation (Optional)**  
+   LLM evaluation was considered, but skipped in this version due to the lack of reference answers.
