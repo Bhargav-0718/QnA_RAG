@@ -15,7 +15,6 @@ def build_or_load_vectorstore(
     """
     persist_directory = os.path.abspath(persist_directory)
 
-    # loading existing Chroma
     if os.path.exists(persist_directory) and os.listdir(persist_directory):
         print(f"📦 Loading existing ChromaDB from: {persist_directory}")
         embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
@@ -25,7 +24,6 @@ def build_or_load_vectorstore(
     docs = load_pdfs_as_texts(data_dir)
     chunks = chunk_documents(docs)
 
-    # Prepare data for Chroma ingestion
     texts = [c for c in chunks]
     metadatas = [{"source": "actor_wiki"} for _ in chunks]
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")

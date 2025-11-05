@@ -5,15 +5,12 @@ from typing import List, Dict
 from dotenv import load_dotenv
 
 load_dotenv()
-
-# Logging & LangSmith Tracing
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_PROJECT"] = "rag-agent"
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 
-# Imports
 from src.data_loader import load_pdfs_as_texts, chunk_documents
 from src.rag_utils import build_or_load_vectorstore, retrieve_context
 
@@ -25,7 +22,6 @@ except ImportError:
     HumanMessage = None
     SystemMessage = None
 
-# Plan Node
 def plan_node(query: str) -> Dict:
     """Decide if retrieval is needed for the query."""
     logger.info("[plan] Interpreting query: %s", query)
@@ -44,14 +40,12 @@ def plan_node(query: str) -> Dict:
     logger.info("[plan] retrieve_needed=%s; reasons=%s", retrieve_needed, reasons)
     return {"query": query, "retrieve": retrieve_needed, "reasons": reasons}
 
-# Retrieve Node
 def retrieve_node(query: str, vectorstore, k: int = 3) -> List[str]:
     logger.info("[retrieve] Fetching top-%d contexts for query", k)
     contexts = retrieve_context(query, vectorstore, k=k)
     logger.info("[retrieve] Retrieved %d context chunks", len(contexts))
     return contexts
 
-# Answer Node
 def answer_node(query: str, contexts: List[str]) -> Dict:
     """Generate answer using LLM and return JSON-compatible dict."""
     logger.info("[answer] Building prompt and calling LLM")
@@ -94,7 +88,6 @@ Do NOT include markdown, backticks, or extra characters.
 
     return answer_json
 
-# Reflect Node
 def reflect_node(query: str, answer_obj: Dict, contexts: List[str]) -> Dict:
     logger.info("[reflect] Checking answer relevance & completeness")
     answer_text = answer_obj.get("answer", "")
@@ -109,7 +102,6 @@ def reflect_node(query: str, answer_obj: Dict, contexts: List[str]) -> Dict:
 
     return {"ok": ok, "notes": notes, "answer": answer_text, "source_chunks": answer_obj.get("source_chunks", [])}
 
-# Workflow Runner
 def run_agent(query: str, vectorstore=None, data_dir: str = "../data", persist_dir: str = "../chroma_db", reference: str = None):
     if vectorstore is None:
         vectorstore = build_or_load_vectorstore(data_dir, persist_directory=persist_dir)
