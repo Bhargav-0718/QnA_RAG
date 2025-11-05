@@ -15,7 +15,7 @@ def build_or_load_vectorstore(
     """
     persist_directory = os.path.abspath(persist_directory)
 
-    # Try loading existing Chroma
+    # loading existing Chroma
     if os.path.exists(persist_directory) and os.listdir(persist_directory):
         print(f"📦 Loading existing ChromaDB from: {persist_directory}")
         embeddings = OpenAIEmbeddings(model="text-embedding-3-small")

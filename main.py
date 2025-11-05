@@ -4,25 +4,15 @@ from src.rag_utils import build_or_load_vectorstore
 from dotenv import load_dotenv
 load_dotenv()
 
-
-# ------------------------------
-# Paths
-# ------------------------------
 DATA_DIR = "data"          # Folder containing actor PDF wiki pages
 CHROMA_DIR = "chroma_db"   # Folder to persist vectorstore
 
-# ------------------------------
-# Page Setup
-# ------------------------------
 st.set_page_config(page_title="Actor Wiki Q&A", layout="centered")
 st.title("🎬 Actor Wiki Q&A")
 st.markdown(
     "Ask questions about the actors based on their wiki PDFs stored in the `data/` folder."
 )
 
-# ------------------------------
-# Load / Cache Vectorstore
-# ------------------------------
 if "vectorstore" not in st.session_state:
     with st.spinner("Loading or building vectorstore..."):
         st.session_state["vectorstore"] = build_or_load_vectorstore(
@@ -33,9 +23,7 @@ if "vectorstore" not in st.session_state:
 
 vectorstore = st.session_state["vectorstore"]
 
-# ------------------------------
 # User Query Input
-# ------------------------------
 query = st.text_input("Type your question here:")
 
 if st.button("Ask"):
@@ -44,7 +32,6 @@ if st.button("Ask"):
     else:
         with st.spinner("Running the agent..."):
             try:
-                # Get answer and reflection from agent
                 answer, reflection = run_agent(
                     query,
                     data_dir=DATA_DIR,
@@ -60,9 +47,7 @@ if st.button("Ask"):
                 st.error(f"Error running agent: {e}")
 
 
-# ------------------------------
-# Optional: List available PDFs
-# ------------------------------
+# List available PDFs
 import os
 pdf_files = [f for f in os.listdir(DATA_DIR) if f.lower().endswith(".pdf")]
 if pdf_files:
