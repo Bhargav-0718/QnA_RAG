@@ -44,19 +44,21 @@ if st.button("Ask"):
     else:
         with st.spinner("Running the agent..."):
             try:
+                # Get answer and reflection from agent
                 answer, reflection = run_agent(
                     query,
                     data_dir=DATA_DIR,
                     persist_dir=CHROMA_DIR
                 )
+
                 st.subheader("Answer")
                 st.write(answer.get("answer", "[No answer returned]"))
 
                 st.subheader("Reflection / Metadata")
                 st.json(reflection)
-
             except Exception as e:
                 st.error(f"Error running agent: {e}")
+
 
 # ------------------------------
 # Optional: List available PDFs

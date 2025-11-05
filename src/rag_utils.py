@@ -12,14 +12,6 @@ def build_or_load_vectorstore(
 ):
     """
     Build or load a Chroma vectorstore from multiple PDFs.
-
-    Steps:
-    - Loads existing Chroma if found.
-    - Otherwise:
-        - Extract text from all PDFs in /data
-        - Chunk the text
-        - Create embeddings via OpenAI
-        - Persist in Chroma
     """
     persist_directory = os.path.abspath(persist_directory)
 
@@ -48,7 +40,6 @@ def build_or_load_vectorstore(
     print(f"✅ Vectorstore built and persisted at: {persist_directory}")
     return chroma
 
-
 def retrieve_context(query: str, vectorstore: Chroma, k: int = 3) -> List[str]:
     """
     Retrieve top-k context chunks relevant to a query.
@@ -59,12 +50,3 @@ def retrieve_context(query: str, vectorstore: Chroma, k: int = 3) -> List[str]:
         txt = getattr(doc, "page_content", None) or getattr(doc, "content", None) or str(doc)
         contexts.append(txt)
     return contexts
-
-
-if __name__ == "__main__":
-    # Quick local test
-    db = build_or_load_vectorstore(data_dir="../data", persist_directory="../chroma_db")
-    sample_query = "Who played Iron Man?"
-    ctxs = retrieve_context(sample_query, db)
-    print(f"\n🔍 Retrieved {len(ctxs)} context chunks for: '{sample_query}'")
-    print(f"🧩 Sample chunk:\n{ctxs[0][:400]}...\n")
