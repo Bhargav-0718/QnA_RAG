@@ -14,16 +14,10 @@ logger = logging.getLogger(__name__)
 from src.data_loader import load_pdfs_as_texts, chunk_documents
 from src.rag_utils import build_or_load_vectorstore, retrieve_context
 
-try:
-    from langchain_openai import ChatOpenAI
-    from langchain.messages import HumanMessage, SystemMessage
-except ImportError:
-    ChatOpenAI = None
-    HumanMessage = None
-    SystemMessage = None
+from langchain_openai import ChatOpenAI
+from langchain.messages import HumanMessage, SystemMessage
 
 def plan_node(query: str) -> Dict:
-    """Decide if retrieval is needed for the query."""
     logger.info("[plan] Interpreting query: %s", query)
     lowered = query.lower()
     retrieve_needed = False
@@ -47,7 +41,6 @@ def retrieve_node(query: str, vectorstore, k: int = 3) -> List[str]:
     return contexts
 
 def answer_node(query: str, contexts: List[str]) -> Dict:
-    """Generate answer using LLM and return JSON-compatible dict."""
     logger.info("[answer] Building prompt and calling LLM")
 
     system_prompt = """

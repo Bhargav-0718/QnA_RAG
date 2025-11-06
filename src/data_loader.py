@@ -8,9 +8,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def load_pdfs_as_texts(pdf_dir: str) -> List[str]:
-    """
-    Loads all PDF files from a directory and extracts text from them.
-    """
     pdf_texts = []
     for filename in os.listdir(pdf_dir):
         if filename.endswith(".pdf"):
@@ -28,9 +25,6 @@ def load_pdfs_as_texts(pdf_dir: str) -> List[str]:
 
 
 def chunk_documents(texts: List[str], chunk_size: int = 1000, chunk_overlap: int = 200) -> List[str]:
-    """
-    Splits long documents into smaller chunks for vector embeddings.
-    """
     splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
     chunks = []
     for text in texts:

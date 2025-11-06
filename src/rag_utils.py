@@ -10,9 +10,6 @@ def build_or_load_vectorstore(
     data_dir: str = "../data",
     persist_directory: str = "../chroma_db",
 ):
-    """
-    Build or load a Chroma vectorstore from multiple PDFs.
-    """
     persist_directory = os.path.abspath(persist_directory)
 
     if os.path.exists(persist_directory) and os.listdir(persist_directory):
@@ -39,9 +36,6 @@ def build_or_load_vectorstore(
     return chroma
 
 def retrieve_context(query: str, vectorstore: Chroma, k: int = 3) -> List[str]:
-    """
-    Retrieve top-k context chunks relevant to a query.
-    """
     results = vectorstore.similarity_search(query, k=k)
     contexts = []
     for doc in results:
